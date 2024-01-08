@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import multer from "multer";
 import cors from "cors";
+import { MONGO_URI, PORT } from "./.env.js";
 
 import {
   registerValidator,
@@ -12,12 +13,20 @@ import {
 import { UserController, PostController } from "./controllers/index.js";
 import { checkAuth, handleValidationErrors } from "./utils/index.js";
 
+// mongoose
+//   .connect(
+//     "mongodb+srv://1994hromov:Stalin1953@databaseblog.12kgjbe.mongodb.net/blog?retryWrites=true&w=majority"
+//   )
+//   .then(() => console.log("DB OK"))
+//   .catch((err) => console.log("DB Error", err));
 mongoose
-  .connect(
-    "mongodb+srv://1994hromov:Stalin1953@databaseblog.12kgjbe.mongodb.net/blog?retryWrites=true&w=majority"
-  )
-  .then(() => console.log("DB OK"))
-  .catch((err) => console.log("DB Error", err));
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB:", error.message);
+  });
 
 const app = express();
 
@@ -111,9 +120,6 @@ app.get(`/posts/comments/latest`, PostController.getLastComments);
 //     })
 // })
 
-app.listen(4444, (err) => {
-  if (err) {
-    return console.log(err);
-  }
-  console.log("Server OK");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
